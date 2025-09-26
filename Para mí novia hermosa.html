@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños, Mi Amor!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400&display=swap');
+
+        :root {
+            --color-fondo: #0d0d0d;
+            --color-texto: #f5f5f5;
+            --color-corazon: #e70f61;
+            --color-acento: #4a4a4a;
+            --transicion: all 0.5s ease-in-out;
+        }
+
+        body {
+            font-family: 'Playfair Display', serif;
+            color: var(--color-texto);
+            background-color: var(--color-fondo);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        #mensaje {
+            font-size: 1.8rem;
+            line-height: 1.6;
+            font-style: italic;
+            transition: opacity 1s ease-in-out;
+            opacity: 0;
+            padding: 0 15px;
+        }
+
+        #mensaje.visible {
+            opacity: 1;
+        }
+
+        .word {
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+        .word:not(:last-child) {
+            padding-right: 0.15em;
+        }
+
+        .rose-container {
+            position: fixed;
+            top: -10vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .rose {
+            position: absolute;
+            bottom: -100px;
+            opacity: 0;
+            animation: float-up linear forwards;
+        }
+
+        .heart {
+            color: var(--color-corazon);
+            font-size: 2em;
+            position: absolute;
+            animation: float-up-heart linear infinite;
+            z-index: 0;
+            opacity: 0;
+        }
+
+        @keyframes float-up {
+            to {
+                transform: translateY(-120vh) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float-up-heart {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            #mensaje {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="mensaje"></div>
+    </div>
+
+    <script>
+        const mensajeCompleto = `Feliz cumpleaños mi Chilly, Mika, Gaby, Mi amor 🖤🥺
+
+        Quiero que te queden claras dos cosas: que te amo y que no hay nadie que pueda hacerme sentir como lo haces tu 🫠
+
+        Sé que no siempre es fácil y que hemos tenido nuestros momentos. Pero quiero que sepas que elijo esto, elijo nuestros desacuerdos y nuestras risas, porque elijo *todo* lo que somos juntos. *Te amo* con una tranquilidad que no necesita de palabras perfectas, solo de hechos y de paciencia.
+
+        Confío en que vas a seguir superándote cada día como siempre lo haces y que vas a ser la mejor abogado, magistrado, juez de todo el país 🖤, que vas a lograr todas y cada una de tus metas en su debido momento, que serás aún más envidiable de lo que actualmente lo eres para todos los que tienen el placer de conocerte. 😍
+
+        Confío en nosotros, confío en ti, confío en la vida. Con el tiempo encontraremos nuestra manera perfecta de encajar, sin forzar nada ni darnos momento de incomodidad, eres la mujer que en todo momento me ha hecho sentir que no necesito a nadie más, que me tengo a mi, te tengo a ti y puedo proponerme a todo sin preocuparme de los resultado. 🤩
+
+        Te amo cuando estamos de acuerdo y te amo cuando no lo estamos. Eso no cambiara jamás. Valoro lo que hemos creado juntos por encima de cualquier dificultad y elijo estar a tu lado todos los días. ♾️
+
+        Sé que han habido tensiones, y es algo que no ignoro. Pero te amo demasiado para dejar que eso opaque nuestro futuro. Confío en nosotros, en que podemos superarnos con paciencia. Supongo que es parte de sentir que eres parte de mi 😅😚
+
+        Mi mayor deseo para ti es que hoy y siempre te sientas tan amada y felíz como lo mereces. Eres mi amor 🥺, te necesito solo a ti. 🖤
+
+        De tu novio: *"Blakau"*, *"Mapache"*, *"Luis"*, *"Amargado"*
+
+        *Te amo*.`;
+
+        const mensajeElement = document.getElementById('mensaje');
+        const palabras = mensajeCompleto.replace(/\n\s*/g, ' ').split(' ');
+        let indicePalabra = 0;
+        let estaMostrando = false;
+
+        const rosaSVG = `<svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16.5c-2.3 0-4.2-1.9-4.2-4.2 0-.9.3-1.8.8-2.5l2.4-2.4c.5-.5 1.2-.8 2-.8.8 0 1.5.3 2 .8l.8.8c.5.5.8 1.2.8 2 0 2.3-1.9 4.2-4.2 4.2zm-2.5-4.5c.3.3.7.5 1.2.5s.9-.2 1.2-.5c.3-.3.5-.7.5-1.2s-.2-.9-.5-1.2c-.3-.3-.7-.5-1.2-.5s-.9.2-1.2.5c-.3.3-.5.7-.5 1.2s.2.9.5 1.2z" fill="#000" stroke="#f5f5f5" stroke-width="1.5"/></svg>`;
+        const corazonUnicode = ['❤️', '🖤', '🌹', '💖', '✨'];
+
+        const mostrarSiguientePalabra = () => {
+            if (indicePalabra < palabras.length) {
+                const palabra = palabras[indicePalabra];
+                let palabraHTML = palabra;
+                // Reemplazar *...* por <em>...</em> para cursiva
+                if (palabra.startsWith('*') && palabra.endsWith('*')) {
+                    palabraHTML = `<em>${palabra.slice(1, -1)}</em>`;
+                }
+                const span = document.createElement('span');
+                span.classList.add('word');
+                span.innerHTML = palabraHTML;
+                mensajeElement.appendChild(span);
+
+                if (palabra.includes('🖤') || palabra.includes('🥺') || palabra.includes('🫠') || palabra.includes('😍') || palabra.includes('🤩') || palabra.includes('♾️') || palabra.includes('😅')) {
+                    crearCorazon(span.getBoundingClientRect());
+                }
+
+                indicePalabra++;
+            } else {
+                // Al finalizar el mensaje, dejar de mostrar y mostrar un mensaje de fin
+                document.body.removeEventListener('click', mostrarSiguientePalabra);
+                document.body.removeEventListener('touchstart', mostrarSiguientePalabra);
+                mensajeElement.classList.add('visible');
+            }
+        };
+
+        const crearCorazon = (rect) => {
+            const corazon = document.createElement('div');
+            corazon.className = 'heart';
+            corazon.innerHTML = corazonUnicode[Math.floor(Math.random() * corazonUnicode.length)];
+            
+            document.body.appendChild(corazon);
+            
+            // Posicionar el corazón cerca de la palabra
+            corazon.style.left = `${rect.left + rect.width / 2}px`;
+            corazon.style.top = `${rect.top}px`;
+
+            // Animación
+            setTimeout(() => {
+                const finalX = Math.random() * window.innerWidth;
+                const finalY = Math.random() * window.innerHeight;
+                corazon.style.transform = `translate(${finalX - rect.left - rect.width / 2}px, ${finalY - rect.top}px) scale(0)`;
+                corazon.style.opacity = 0;
+            }, 10); // Un pequeño retraso para asegurar que la posición se aplique
+            
+            setTimeout(() => {
+                corazon.remove();
+            }, 3000); // Eliminar después de 3 segundos
+        };
+
+        const crearRosa = () => {
+            const rose = document.createElement('img');
+            rose.src = "data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16.5c-2.3 0-4.2-1.9-4.2-4.2 0-.9.3-1.8.8-2.5l2.4-2.4c.5-.5 1.2-.8 2-.8.8 0 1.5.3 2 .8l.8.8c.5.5.8 1.2.8 2 0 2.3-1.9 4.2-4.2 4.2zm-2.5-4.5c.3.3.7.5 1.2.5s.9-.2 1.2-.5c.3-.3.5-.7.5-1.2s-.2-.9-.5-1.2c-.3-.3-.7-.5-1.2-.5s-.9.2-1.2.5c-.3.3-.5.7-.5 1.2s.2.9.5 1.2z' fill='%23000' stroke='%23f5f5f5' stroke-width='1.5'/%3E%3C/svg%3E";
+            rose.alt = "Rosa negra";
+            rose.className = 'rose';
+            const size = Math.random() * 50 + 30; // Tamaño de 30px a 80px
+            rose.style.width = `${size}px`;
+            rose.style.height = `${size}px`;
+            rose.style.left = `${Math.random() * 100}vw`;
+            const duration = Math.random() * 5 + 8; // Duración de 8s a 13s
+            rose.style.animationDuration = `${duration}s`;
+            document.body.appendChild(rose);
+            
+            setTimeout(() => {
+                rose.remove();
+            }, duration * 1000); // Eliminar después de que termine la animación
+        };
+
+        const iniciarEfecto = () => {
+            document.body.classList.add('active');
+            estaMostrando = true;
+            mostrarSiguientePalabra();
+            // Crear rosas negras de forma intermitente
+            setInterval(crearRosa, 2000);
+        };
+
+        document.body.addEventListener('click', () => {
+            if (!estaMostrando) {
+                iniciarEfecto();
+            } else {
+                mostrarSiguientePalabra();
+            }
+        });
+
+        document.body.addEventListener('touchstart', (e) => {
+            if (!estaMostrando) {
+                iniciarEfecto();
+            } else {
+                mostrarSiguientePalabra();
+            }
+        });
+
+    </script>
+</body>
+</html>
